@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en" >
+
+<head>
+  <meta charset="UTF-8">
+  <title>logIn || registration</title>
+  
+  
+  <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Open+Sans:600'>
+
+      <link rel="stylesheet" href="./css/style.css">
+</head>
+
+<body>
+
+  <div class="login-wrap">
+	<div class="login-html">
+		<input id="tab-1" type="radio" name="tab" class="sign-in" checked><label for="tab-1" class="tab">Sign In</label>
+		<input id="tab-2" type="radio" name="tab" class="sign-up"><label for="tab-2" class="tab">Sign Up</label>
+					<div class="login-form">
+						<div class="sign-in-htm">
+							<form id="loginForm" onsubmit="loginUser(event)" action="#">
+								<div class="group">
+										<label for="pass" class="label">Email Address</label>
+										<input name="email"  type="text" class="input">
+									</div>
+									<div class="group">
+										<label for="pass" class="label">Password</label>
+										<input name="password"  type="password" class="input" data-type="password">
+									</div>
+									<div class="group">
+										<input id="check" type="checkbox" class="check" checked>
+										<label for="check"><span class="icon"></span> Keep me Signed in</label>
+									</div>
+									<div class="group">
+										<input type="submit" class="button" value="Sign In">
+									</div>
+									<a href="/api/user/google/auth" class="loginBtn loginBtn--google">Login with Google</a>
+									<div class="hr"></div>
+									<div class="foot-lnk">
+										<a href="#forgot">Forgot Password?</a>
+									</div>
+							</form>
+						</div>
+
+			<form  action="/api/user/register" method="POST">
+			<div class="sign-up-htm">
+				<div class="group">
+					<label placeholder="first_name" class="label">first name</label>
+					<input name="first_name" id="user" type="text" class="input">
+					<label placeholder="last_name" class="label">last name</label>
+					<input name="last_name" id="user" type="text" class="input">
+					<label placeholder="dob" class="label">date of birth</label>
+					<input name="dob" id="user" type="date" class="input">	
+					<label for="pass" class="label">Email Address</label>
+					<input name="email"id="pass" type="text" class="input">
+					<label for="pass" class="label">Password</label>
+					<input name="password" id="pass" type="password" class="input" data-type="password">
+					<label for="pass" class="label">confirm Password</label>
+					<input name="password2"id="pass" type="password" class="input" data-type="password">
+				</br>
+					<input type="submit" class="button" value="Sign Up">
+				</div>	
+				  <a href="/api/user/google/auth" class="loginBtn loginBtn--google">Login with Google</a>
+				<div class="hr"></div>
+				<div class="foot-lnk">
+					<label for="tab-1">Already Member?</a>
+				</div>
+			</div>
+			</form>		
+		</div>
+	</div>
+</div>
+  
+  <script>
+	  function loginUser(e){
+		e.preventDefault();
+
+		let form = document.forms["loginForm"];
+		const body = JSON.stringify({email:form["email"].value,password:form["password"].value});
+		const headers={
+            'Content-Type': 'application/json',
+            // 'Content-Type': 'application/x-www-form-urlencoded',
+        };
+		fetch("/api/user/login",{method:"POST",body,headers}).then(res=>{
+			return res.json()
+		}).then(parsedBody=>{
+			if(parsedBody.code===200 && parsedBody.token){
+				localStorage.setItem('token',parsedBody.token)
+				return window.location.href="/profile";
+			}
+			else{
+				alert(parsedBody.message)
+			}	
+		})
+	
+		}
+  </script>
+
+</body>
+
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>user profile</title>
+    <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Open+Sans:600'>
+
+</head>
+
+<body>
+
+    <div>
+        <h1>Profle Details</h1>
+
+        <form id="profile" onsubmit="updateProfile(event)" action="#">
+            <label for="user_name">User name</label>
+            <input type="text" name="user_name"/> <br/>
+            <label for="dob">Date of Birth</label>
+            <input type="date" name="dob"/><br/>
+            <label for="address">Address</label>
+            <input type="text" name="address"/><br/>
+            <label for="link1">link 1</label>
+            <input type="text" name="link1"/><br/>
+            <label for="link2">link 2</label>
+            <input type="text" name="link2"/><br>
+            <label for="link3">link 3</label>
+            <input type="text" name="link3"/><br>
+            <button type="submit">Update</button>
+        </form>
+        <div id="profile-details">
+        </div>
+    </div>
+    <script>
+        var token=localStorage.getItem("token");
+        document.addEventListener("DOMContentLoaded", function() {
+            fetch("api/user/profile",{method:"GET",headers:{authorization:`bearer ${token}`}}).then(e=>e.json()).then(elem=>{
+                document.getElementById("profile-details").innerHTML=JSON.stringify(elem);    
+                let data= elem.data && elem.data[0] ?elem.data[0]:null;
+                if(data){
+                    let form=document.forms["profile"];
+                    form["user_name"].value=data.user_name;
+                    let dob=new Date(data.dob).toISOString().split("T")[0];
+                    form["dob"].value=dob;
+                    form["address"].value=data.address;
+                    form["link1"].value=data.link1;
+                    form["link2"].value=data.link2;
+                    form["link3"].value=data.link3;
+                }
+            })
+        })
+        function updateProfile(event){
+            event.preventDefault();
+            let form = event.target;
+            let body = JSON.stringify( {
+                user_name:form["user_name"].value,
+                dob:form["dob"].value,
+                address:form["address"].value,
+                link1:form["link1"].value,
+                link2:form["link2"].value,
+                link3:form["link3"].value,
+            }
+            );
+            let headers = {
+                'Content-Type': 'application/json',
+                authorization:`bearer ${token}`
+            }
+            fetch("/api/user/profile",{method:"PUT",body,headers}).then(res=>res.json()).then(e=>{debugger});
+        }
+
+    </script>
+</body>
+</html>
